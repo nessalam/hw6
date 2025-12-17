@@ -95,5 +95,45 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
 //add your solution here!
+  //check bounds to add first letter
+  if(r >= board.size() || c >= board.size()){
+    //check if what we curr have is a word
+    if(word != "" && dict.find(word) != dict.end()){
+      result.insert(word);
+      return true;
+    }
+    return false;
+  }
 
+  //within bounds so add curr letter
+  word += board[r][c];
+
+  //check if curr string is valid 
+  bool isValid = (prefix.find(word) != prefix.end());
+
+  //not valid, cant form word
+  if(!isValid){
+    //check if curr prefix is valid tho
+    if(dict.find(word) != dict.end()){
+      result.insert(word);
+      return true;
+    }
+    return false;
+  }
+
+  //check if curr word is a complete word
+  bool isComplete = (dict.find(word) != dict.end());
+
+  //extend word by moving to next pos
+  bool longerWord = false;
+  if(isValid){
+    longerWord = boggleHelper(dict, prefix, board, word, result, r + dr, c+dc, dr, dc);
+  }
+  //if curr word is the longest one so far, add it
+  if(isComplete && !longerWord){
+    result.insert(word);
+    return true;
+  }
+
+  return (isComplete || longerWord);
 }
